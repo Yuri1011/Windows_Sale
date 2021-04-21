@@ -1,14 +1,11 @@
-const forms = () => {
+import checkNumInputs from './checkNumInputs';
+
+const forms = (state) => {
     //получаем элементы
     const form = document.querySelectorAll('form'),
-        inputs = document.querySelectorAll('input'),
-        phoneInputs = document.querySelectorAll('input[name="user_phone"]');
+        inputs = document.querySelectorAll('input');
 //проверка ввода телефона на цифры
-    phoneInputs.forEach(item => {
-        item.addEventListener('input', () => {
-            item.value = item.value.replace(/\D/, '');
-        })
-    })
+    checkNumInputs('input[name="user_phone"]');
 //объект с сообщениями,которые будут показываться пользователю
     const message = {
         loading: 'Загрузка...',
@@ -43,6 +40,11 @@ const forms = () => {
             item.appendChild(statusMessage);
 //собираем все данные из формы
             const formData = new FormData(item);
+            if (item.getAttribute('data-calc') === 'end') {
+                for (let key in state) {
+                    formData.append(key, state[key]);
+                }
+            }
 // отправляем запрос на сервер
             postData('assets/server.php', formData)
                 .then(res => {
